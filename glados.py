@@ -28,6 +28,8 @@ if __name__ == '__main__':
         time = state.json()['data']['leftDays']
         if isinstance(time,str):
             time = time.split('.')[0]
+        else:
+            time=str(time)
         email = state.json()['data']['email']
         if 'message' in checkin.text:
             mess = checkin.json()['message']

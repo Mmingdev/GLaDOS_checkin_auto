@@ -35,7 +35,7 @@ if __name__ == '__main__':
             mess = checkin.json()['message']
             points = checkin.json()['list'][0]['balance'].split(".")[0]
             print(email+'----结果--'+mess+'----剩余('+time+')天'+'----点数('+points+')')  # 日志输出
-            sendContent += email+'----'+mess+'----剩余('+time+')天'+'----点数('+points+')\n'
+            sendContent += mess+'--剩余('+time+')天'+'--点数('+points+')--'+email'\n'
         else:
             requests.get('http://www.pushplus.plus/send?token=' + sckey + '&content='+email+'cookie已失效')
             print('cookie已失效')  # 日志输出

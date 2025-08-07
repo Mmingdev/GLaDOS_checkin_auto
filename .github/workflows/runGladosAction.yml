@@ -29,13 +29,13 @@ jobs:
           GLADOS_COOKIE: "${{ secrets.GLADOS_COOKIE }}"
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
 #      - uses: gautamkrishnar/keepalive-workflow@master
-      - name: Run checkin-ikuuu
-          run: |
-            python3 ikuuu.py
-          env:
-            ikuuu_COOKIE: "${{ secrets.ikuuu_COOKIE }}"
-            PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
-      #      - uses: gautamkrishnar/keepalive-workflow@master
+      - name: Run ikuuu
+        run: |
+          python3 ikuuu.py
+        env:
+          ikuuu_COOKIE: "${{ secrets.ikuuu_COOKIE }}"
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+      # - uses: gautamkrishnar/keepalive-workflow@master
       - name: Commitfile
         if: github.event.schedule == '30 1 * 7 6'
         run: |

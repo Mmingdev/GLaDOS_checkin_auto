@@ -2,6 +2,38 @@ import requests,json,os
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
+def login_and_get_cookie():
+    login_url = "https://ikuuu.ch/auth/login"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "content-type":"application/x-www-form-urlencoded; charset=UTF-8",
+        "origin":"https://ikuuu.ch",
+        "priority":"u=1, i",
+        "referer":"https://ikuuu.ch/auth/login",
+        "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
+    }
+    data = {
+        "host":"ikuuu.ch",
+        "email": os.environ.get("IKUUU_EMAIL",""),
+        "passwd": os.environ.get("IKUUU_PWD",""),
+        "code":""
+    }
+    try:
+        session = requests.Session()
+        response = session.post(login_url, headers=headers, data=data)
+        if response.status_code == 200:
+            print("登录成功，获取Cookie")
+            return session.cookies.get_dict()
+        else:
+            print("登录失败，状态码：", response.status_code)
+            return None
+    except ProxyError as e:
+        print("代理错误：", e)
+        return None
+    except Exception as e:
+        print("登录过程中发生错误：", e)
+        return None
+
 if __name__ == '__main__':
 # pushplus秘钥 申请地址 http://www.pushplus.plus/
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
@@ -21,10 +53,22 @@ if __name__ == '__main__':
     # payload={
     #     'token': 'glados.one'
     # }
+    n=2
     for cookie in cookies:
-        checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})#,data=json.dumps(payload)
-        #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
-    #--------------------------------------------------------------------------------------------------------#  
+        while n>0:
+            n=n-1
+            checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
+            #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
+            if checkin.status_code == 200:
+                msg = checkin.json()['msg']
+                print(msg)
+                break
+            else:
+                cookie = login_and_get_cookie()
+        else:
+            print("Cookie失效")
+    #--------------------------------------------------------------------------------------------------------#
+
         #time = state.json()['data']['leftDays']
     #     if isinstance(time,str):
     #         time = time.split('.')[0]

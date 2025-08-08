@@ -5,12 +5,13 @@ import requests,json,os
 def login_and_get_cookie():
     login_url = "https://ikuuu.de/auth/login"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "accept":"application/json, text/javascript, */*;",
         "content-type":"application/x-www-form-urlencoded; charset=UTF-8",
+        "cookie":"lang=zh-cn",
         "origin":"https://ikuuu.de",
         "priority":"u=1, i",
         "referer":"https://ikuuu.de/auth/login",
-        "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     }
     data = {
         "host":"ikuuu.de",
@@ -18,9 +19,10 @@ def login_and_get_cookie():
         "passwd": os.environ.get("IKUUU_PWD",""),
         "code":""
     }
+
     try:
         session = requests.Session()
-        response = session.post(login_url, headers=headers, data=data)
+        response = session.post(login_url, headers=headers, data=json.dumps(data))
         if response.status_code == 200:
             print("登录成功，获取Cookie")
             return session.cookies.get_dict()
@@ -49,7 +51,7 @@ if __name__ == '__main__':
     url2= "https://ikuuu.de/user"
     referer = 'https://ikuuu.de/user'
     origin = "https://ikuuu.de"
-    useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
+    useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     # payload={
     #     'token': 'glados.one'
     # }

@@ -3,17 +3,17 @@ import requests,json,os
 # github workflows
 # -------------------------------------------------------------------------------------------
 def login_and_get_cookie():
-    login_url = "https://ikuuu.ch/auth/login"
+    login_url = "https://ikuuu.de/auth/login"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "content-type":"application/x-www-form-urlencoded; charset=UTF-8",
-        "origin":"https://ikuuu.ch",
+        "origin":"https://ikuuu.de",
         "priority":"u=1, i",
-        "referer":"https://ikuuu.ch/auth/login",
+        "referer":"https://ikuuu.de/auth/login",
         "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
     }
     data = {
-        "host":"ikuuu.ch",
+        "host":"ikuuu.de",
         "email": os.environ.get("IKUUU_EMAIL",""),
         "passwd": os.environ.get("IKUUU_PWD",""),
         "code":""
@@ -45,10 +45,10 @@ if __name__ == '__main__':
         print('未获取到COOKIE变量') 
         cookies = []
         exit(0)
-    url= "https://ikuuu.ch/user/checkin"
-    url2= "https://ikuuu.ch/user"
-    referer = 'https://ikuuu.ch/user'
-    origin = "https://ikuuu.ch"
+    url= "https://ikuuu.de/user/checkin"
+    url2= "https://ikuuu.de/user"
+    referer = 'https://ikuuu.de/user'
+    origin = "https://ikuuu.de"
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0"
     # payload={
     #     'token': 'glados.one'

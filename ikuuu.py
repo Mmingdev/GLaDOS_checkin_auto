@@ -46,7 +46,8 @@ if __name__ == '__main__':
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
     key = os.environ.get("ikuuu_key", "")
-    cookie = Encryptclass.decrypt_oralce(key,d_text)
+    ecmethod=Encryptclass()# 实例化
+    cookie = ecmethod.decrypt_oralce(key,d_text)
     # cookie = os.environ.get("ikuuu_COOKIE", "")
     if cookie == "":
         print('未获取到COOKIE')

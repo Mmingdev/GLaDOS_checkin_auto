@@ -45,8 +45,8 @@ if __name__ == '__main__':
     # 账号cookie
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
-    key = os.environ.get("ikuuu_key", "")
-    ecmethod=Encryptclass()# 实例化
+    key = os.environ.get("IKUUU_KEY", "")
+    ecmethod = Encryptclass()# 实例化
     cookie = ecmethod.decrypt_oralce(key,d_text)
     # cookie = os.environ.get("ikuuu_COOKIE", "")
     if cookie == "":
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     if checkin.status_code == 200:
         msg = checkin.json()['msg']
         print(msg)
-        e_text = Encryptclass.encrypt_oracle(key, cookie)
+        e_text = ecmethod.encrypt_oracle(key, cookie)
         with open('tempdata.txt', 'w') as file:
             file.write(e_text)
     else:

@@ -38,7 +38,6 @@ def login_and_get_cookie(email,pwd):
         return None
 
 if __name__ == '__main__':
-    test=login_and_get_cookie()
     # pushplus秘钥 申请地址 http://www.pushplus.plus/
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
     # 推送内容

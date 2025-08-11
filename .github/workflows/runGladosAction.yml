@@ -38,6 +38,10 @@ jobs:
           IKUUU_KEY : ${{ secrets.IKUUU_KEY }}
           IKUUU_EMAIL : ${{ secrets.IKUUU_EMAIL }}
           IKUUU_PWD : ${{ secrets.IKUUU_PWD }}
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          USER_ID: ${{ secrets.USER_ID }}
+          TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
       # - uses: gautamkrishnar/keepalive-workflow@master
       - name: Commitfile
         if: github.event.schedule == '30 1 * * *'

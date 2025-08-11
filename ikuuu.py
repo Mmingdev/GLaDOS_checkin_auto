@@ -1,5 +1,6 @@
 import requests,json,os
 from EncryptClass import Encryptclass
+from sendtomp import Send_to_MP
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
@@ -38,15 +39,21 @@ def login_and_get_cookie():
         return None
 
 if __name__ == '__main__':
-    # pushplus秘钥 申请地址 http://www.pushplus.plus/
-    sckey = os.environ.get("PUSHPLUS_TOKEN", "")
+    # 导入系统变量
+    sckey = os.environ.get("PUSHPLUS_TOKEN", "")# pushplus秘钥 申请地址 http://www.pushplus.plus/
+    APP_ID = os.getenv('APP_ID')
+    APP_SECRET = os.getenv('APP_SECRET')
+    USER_ID = os.getenv('USER_ID')
+    TEMPLATE_ID = os.getenv('TEMPLATE_ID')
     # 推送内容
     sendContent = ''
+    # 实例化
+    ecmethod = Encryptclass()
+    stmp = Send_to_MP(APP_ID,APP_SECRET,USER_ID,TEMPLATE_ID)
     # 账号cookie
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
     key = os.environ.get("IKUUU_KEY", "")
-    ecmethod = Encryptclass()# 实例化
     cookie = ecmethod.decrypt_oralce(key,d_text)
     # cookie = os.environ.get("ikuuu_COOKIE", "")
     if cookie == "":
@@ -59,12 +66,8 @@ if __name__ == '__main__':
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
     checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-    if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
+    if checkin.status_code == 200 and checkin.text.find('msg') != -1:
         msg = checkin.json()['msg']
-        print(msg)
-        e_text = ecmethod.encrypt_oracle(key, cookie)
-        with open('tempdata.txt', 'w') as file:
-            file.write(e_text)
     else:
         cookie_tm = login_and_get_cookie()
         if cookie_tm != None:
@@ -73,17 +76,17 @@ if __name__ == '__main__':
             for name, value in cookies:
                 cookie += '{0}={1};'.format(name, value)
             checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-            #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
             if checkin.status_code == 200 and checkin.text.find("msg") != -1:
                 msg = checkin.json()['msg']
-                print(msg)
                 e_text = Encryptclass.encrypt_oracle(key,cookie)
                 with open('tempdata.txt', 'w') as file:
                     file.write(e_text)
             else:
-                print("签到失败，状态码：", checkin.status_code)
+                msg = '签到失败，状态码：{}'.format(checkin.status_code)
         else:
-            print("登录获取cookie失败")
+            msg = "登录获取cookie失败"
+    print(msg)
+    stmp._send_to_mp(msg)
     #--------------------------------------------------------------------------------------------------------#
 
         #time = state.json()['data']['leftDays']

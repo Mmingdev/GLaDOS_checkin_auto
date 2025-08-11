@@ -59,7 +59,7 @@ if __name__ == '__main__':
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
     checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-    if checkin.status_code == 200:
+    if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
         msg = checkin.json()['msg']
         print(msg)
         e_text = ecmethod.encrypt_oracle(key, cookie)
@@ -73,14 +73,14 @@ if __name__ == '__main__':
             cookie += '{0}={1};'.format(name, value)
         checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
         #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
-        if checkin.status_code == 200:
+        if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
             msg = checkin.json()['msg']
             print(msg)
             e_text = Encryptclass.encrypt_oracle(key,cookie)
             with open('tempdata.txt', 'w') as file:
                 file.write(e_text)
         else:
-            print("签到失败，状态码：", checkin.status_code, "信息：", checkin.json()['msg'])
+            print("签到失败，状态码：", checkin.status_code)
     #--------------------------------------------------------------------------------------------------------#
 
         #time = state.json()['data']['leftDays']

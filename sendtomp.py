@@ -1,6 +1,7 @@
 from wechatpy import WeChatClient
 from wechatpy.client.api import WeChatMessage, WeChatTemplate
 from datetime import datetime, timedelta
+import random
 
 class Send_to_MP:
     def __init__(self,app_id,app_secret,user_id,template_id):

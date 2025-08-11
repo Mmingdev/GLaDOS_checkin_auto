@@ -3,7 +3,7 @@ from EncryptClass import Encryptclass
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
-def login_and_get_cookie():
+def login_and_get_cookie(email,pwd):
     login_url = "https://ikuuu.de/auth/login"
     headers = {
         "accept":"application/json, text/javascript, */*;",
@@ -16,8 +16,8 @@ def login_and_get_cookie():
     }
     data = {
         "host":"ikuuu.de",
-        "email": os.environ.get("IKUUU_EMAIL",""),
-        "passwd": os.environ.get("IKUUU_PWD",""),
+        "email": email,
+        "passwd": pwd,
         "code":""
     }
 
@@ -29,7 +29,7 @@ def login_and_get_cookie():
             return session.cookies.get_dict()
         else:
             print("登录失败，状态码：", response.status_code,"信息：",response.json()['msg'])
-            return None
+            return "登录失败"
     except ConnectionError as e:
         print("代理错误：", e)
         return None
@@ -38,10 +38,14 @@ def login_and_get_cookie():
         return None
 
 if __name__ == '__main__':
+    test=login_and_get_cookie()
     # pushplus秘钥 申请地址 http://www.pushplus.plus/
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
     # 推送内容
     sendContent = ''
+    # 获取变量
+    email =  os.environ.get("IKUUU_EMAIL", "")
+    pwd =  os.environ.get("IKUUU_PWD", "")
     # 账号cookie
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
@@ -66,21 +70,24 @@ if __name__ == '__main__':
         with open('tempdata.txt', 'w') as file:
             file.write(e_text)
     else:
-        cookie_tm = login_and_get_cookie()
-        cookies = cookie_tm.items()
-        cookie = 'lang=zh-cn;'
-        for name, value in cookies:
-            cookie += '{0}={1};'.format(name, value)
-        checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-        #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
-        if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
-            msg = checkin.json()['msg']
-            print(msg)
-            e_text = Encryptclass.encrypt_oracle(key,cookie)
-            with open('tempdata.txt', 'w') as file:
-                file.write(e_text)
+        cookie_tm = login_and_get_cookie(email,pwd)
+        if cookie_tm.find("lang=zh-cn;") != -1:
+            cookies = cookie_tm.items()
+            cookie = 'lang=zh-cn;'
+            for name, value in cookies:
+                cookie += '{0}={1};'.format(name, value)
+            checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
+            #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
+            if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
+                msg = checkin.json()['msg']
+                print(msg)
+                e_text = Encryptclass.encrypt_oracle(key,cookie)
+                with open('tempdata.txt', 'w') as file:
+                    file.write(e_text)
+            else:
+                print("签到失败，状态码：", checkin.status_code)
         else:
-            print("签到失败，状态码：", checkin.status_code)
+            print("登录获取cookie失败")
     #--------------------------------------------------------------------------------------------------------#
 
         #time = state.json()['data']['leftDays']

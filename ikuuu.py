@@ -3,7 +3,7 @@ from EncryptClass import Encryptclass
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
-def login_and_get_cookie(email,pwd):
+def login_and_get_cookie():
     login_url = "https://ikuuu.de/auth/login"
     headers = {
         "accept":"application/json, text/javascript, */*;",
@@ -16,8 +16,8 @@ def login_and_get_cookie(email,pwd):
     }
     data = {
         "host":"ikuuu.de",
-        "email": email,
-        "passwd": pwd,
+        "email": os.environ.get("IKUUU_EMAIL", ""),
+        "passwd": os.environ.get("IKUUU_PWD", ""),
         "code":""
     }
 
@@ -42,9 +42,6 @@ if __name__ == '__main__':
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
     # 推送内容
     sendContent = ''
-    # 获取变量
-    email =  os.environ.get("IKUUU_EMAIL", "")
-    pwd =  os.environ.get("IKUUU_PWD", "")
     # 账号cookie
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
@@ -69,7 +66,7 @@ if __name__ == '__main__':
         with open('tempdata.txt', 'w') as file:
             file.write(e_text)
     else:
-        cookie_tm = login_and_get_cookie(email,pwd)
+        cookie_tm = login_and_get_cookie()
         if cookie_tm.find("lang=zh-cn;") != -1:
             cookies = cookie_tm.items()
             cookie = 'lang=zh-cn;'

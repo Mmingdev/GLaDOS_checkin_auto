@@ -36,6 +36,8 @@ jobs:
           ikuuu_COOKIE: "${{ secrets.ikuuu_COOKIE }}"
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
           IKUUU_KEY : ${{ secrets.IKUUU_KEY }}
+          IKUUU_EMAIL : ${{ secrets.IKUUU_EMAIL }}
+          IKUUU_PWD : ${{ secrets.IKUUU_PWD }}
       # - uses: gautamkrishnar/keepalive-workflow@master
       - name: Commitfile
         if: github.event.schedule == '30 1 * * *'

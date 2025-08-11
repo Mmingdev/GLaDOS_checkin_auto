@@ -74,7 +74,7 @@ if __name__ == '__main__':
                 cookie += '{0}={1};'.format(name, value)
             checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
             #state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
-            if checkin.status_code == 200 and checkin.text.find('"ret":0') != -1:
+            if checkin.status_code == 200 and checkin.text.find("msg") != -1:
                 msg = checkin.json()['msg']
                 print(msg)
                 e_text = Encryptclass.encrypt_oracle(key,cookie)

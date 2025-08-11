@@ -29,7 +29,7 @@ def login_and_get_cookie():
             return session.cookies.get_dict()
         else:
             print("登录失败，状态码：", response.status_code,"信息：",response.json()['msg'])
-            return "登录失败"
+            return None
     except ConnectionError as e:
         print("代理错误：", e)
         return None
@@ -67,7 +67,7 @@ if __name__ == '__main__':
             file.write(e_text)
     else:
         cookie_tm = login_and_get_cookie()
-        if cookie_tm.find("lang=zh-cn;") != -1:
+        if cookie_tm != None:
             cookies = cookie_tm.items()
             cookie = 'lang=zh-cn;'
             for name, value in cookies:

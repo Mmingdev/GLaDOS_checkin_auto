@@ -71,6 +71,7 @@ if __name__ == '__main__':
     if checkin.status_code == 200 and checkin.text.find('"msg"') != -1:
         msg = checkin.json()['msg']
     else:
+        print("cookie失效")
         cookie_tm = login_and_get_cookie(email,pwd)
         if cookie_tm != None:
             cookies = cookie_tm.items()

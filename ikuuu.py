@@ -4,7 +4,7 @@ from sendtomp import Send_to_MP
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
-def login_and_get_cookie():
+def login_and_get_cookie(email,pwd):
     login_url = "https://ikuuu.de/auth/login"
     headers = {
         "accept":"application/json, text/javascript, */*;",
@@ -17,8 +17,8 @@ def login_and_get_cookie():
     }
     data = {
         "host":"ikuuu.de",
-        "email": os.environ.get("IKUUU_EMAIL", ""),
-        "passwd": os.environ.get("IKUUU_PWD", ""),
+        "email": email,
+        "passwd": pwd,
         "code":""
     }
 
@@ -45,6 +45,8 @@ if __name__ == '__main__':
     APP_SECRET = os.getenv('APP_SECRET')
     USER_ID = os.getenv('USER_ID')
     TEMPLATE_ID = os.getenv('TEMPLATE_ID')
+    email = os.getenv("IKUUU_EMAIL")
+    pwd = os.getenv("IKUUU_PWD")
     # 推送内容
     sendContent = ''
     # 实例化
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     if checkin.status_code == 200 and checkin.text.find('msg') != -1:
         msg = checkin.json()['msg']
     else:
-        cookie_tm = login_and_get_cookie()
+        cookie_tm = login_and_get_cookie(email,pwd)
         if cookie_tm != None:
             cookies = cookie_tm.items()
             cookie = 'lang=zh-cn;'

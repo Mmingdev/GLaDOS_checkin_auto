@@ -47,6 +47,7 @@ if __name__ == '__main__':
     TEMPLATE_ID = os.getenv('TEMPLATE_ID')
     email = os.getenv("IKUUU_EMAIL")
     pwd = os.getenv("IKUUU_PWD")
+    key = os.getenv("IKUUU_KEY")
     # 推送内容
     sendContent = ''
     # 实例化
@@ -55,7 +56,6 @@ if __name__ == '__main__':
     # 账号cookie
     with open('tempdata.txt', 'r', encoding='utf-8') as file:
         d_text = file.read()
-    key = os.environ.get("IKUUU_KEY", "")
     cookie = ecmethod.decrypt_oralce(key,d_text)
     # cookie = os.environ.get("ikuuu_COOKIE", "")
     if cookie == "":
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
     checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-    if checkin.status_code == 200 and checkin.text.find('msg') != -1:
+    if checkin.status_code == 200 and checkin.text.find('"msg"') != -1:
         msg = checkin.json()['msg']
     else:
         cookie_tm = login_and_get_cookie(email,pwd)
@@ -78,9 +78,9 @@ if __name__ == '__main__':
             for name, value in cookies:
                 cookie += '{0}={1};'.format(name, value)
             checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
-            if checkin.status_code == 200 and checkin.text.find("msg") != -1:
+            if checkin.status_code == 200 and checkin.text.find('"msg"') != -1:
                 msg = checkin.json()['msg']
-                e_text = Encryptclass.encrypt_oracle(key,cookie)
+                e_text = ecmethod.encrypt_oracle(key,cookie)
                 with open('tempdata.txt', 'w') as file:
                     file.write(e_text)
             else:

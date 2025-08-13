@@ -23,3 +23,14 @@ class Send_to_MP:
             "re": {"value": msg, "color": self._get_random_color()},
         }
         res = wm.send_template(self._user_id, self._template_id, data)
+
+    def _send_to_mp_failed(self, msg: str):
+        tday = datetime.now() + timedelta(hours=8)
+        tday = tday.strftime("%Y-%m-%d %H:%M:%S")
+        client = WeChatClient(self._app_id, self._app_secret)
+        wm = WeChatMessage(client)
+        data = {
+            "date": {"value": format(tday), "color": self._get_random_color()},
+            "re": {"value": msg, "color": self._get_random_color()},
+        }
+        res = wm.send_template(self._user_id, '6vJULYDP2zC93dL9U-Se-IOIqmTa76N8hoNrgvW979c', data)

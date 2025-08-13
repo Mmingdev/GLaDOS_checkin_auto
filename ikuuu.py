@@ -70,6 +70,7 @@ if __name__ == '__main__':
     checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
     if checkin.status_code == 200 and checkin.text.find('"msg"') != -1:
         msg = checkin.json()['msg']
+        n = 'success'
     else:
         print("cookie失效")
         cookie_tm = login_and_get_cookie(email,pwd)
@@ -81,15 +82,21 @@ if __name__ == '__main__':
             checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})
             if checkin.status_code == 200 and checkin.text.find('"msg"') != -1:
                 msg = checkin.json()['msg']
+                n = 'success'
                 e_text = ecmethod.encrypt_oracle(key,cookie)
                 with open('tempdata.txt', 'w') as file:
                     file.write(e_text)
             else:
                 msg = '签到失败，状态码：{}'.format(checkin.status_code)
+                n = 'failed'
         else:
             msg = "登录获取cookie失败"
+            n = 'failed'
     print(msg)
-    stmp._send_to_mp(msg)
+    if n == 'success':
+        stmp._send_to_mp(msg)
+    else:
+        stmp._send_to_mp_failed(msg)
     #--------------------------------------------------------------------------------------------------------#
 
         #time = state.json()['data']['leftDays']

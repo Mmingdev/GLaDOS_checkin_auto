@@ -93,13 +93,11 @@ if __name__ == '__main__':
             msg = "登录获取cookie失败"
             n = 'failed'
     print(msg)
-    if n == 'success':
-        stmp._send_to_mp(msg)
-    else:
+    if n == 'failed':
         stmp._send_to_mp_failed(msg)
     #--------------------------------------------------------------------------------------------------------#
 
-        #time = state.json()['data']['leftDays']
+        # time = state.json()['data']['leftDays']
     #     if isinstance(time,str):
     #         time = time.split('.')[0]
     #     else:

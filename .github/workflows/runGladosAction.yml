@@ -28,6 +28,10 @@ jobs:
         env: 
           GLADOS_COOKIE: "${{ secrets.GLADOS_COOKIE }}"
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          USER_ID: ${{ secrets.USER_ID }}
+          TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
 #      - uses: gautamkrishnar/keepalive-workflow@master
       - name: Run ikuuu
         run: |

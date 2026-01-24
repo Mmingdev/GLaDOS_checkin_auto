@@ -1,22 +1,30 @@
 import requests,json,os
+from sendtomp import Send_to_MP
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 # pushplus秘钥 申请地址 http://www.pushplus.plus/
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
-# 推送内容
     sendContent = ''
+    failcontent = ''
+# 公众号
+    APP_ID = os.getenv('APP_ID')
+    APP_SECRET = os.getenv('APP_SECRET')
+    USER_ID = os.getenv('USER_ID')
+    TEMPLATE_ID = os.getenv('TEMPLATE_ID')
+    stmp = Send_to_MP(APP_ID,APP_SECRET,USER_ID,TEMPLATE_ID)
 # glados账号cookie 直接使用数组 如果使用环境变量需要字符串分割一下
     cookies = os.environ.get("GLADOS_COOKIE", []).split("&")
     if cookies[0] == "":
         print('未获取到COOKIE变量') 
         cookies = []
         exit(0)
-    url= "https://glados.cloud/api/user/checkin"
-    url2= "https://glados.cloud/api/user/status"
-    referer = 'https://glados.cloud/console/checkin'
-    origin = "https://glados.cloud"
+    host="https://glados.cloud"
+    url= host+"/api/user/checkin"
+    url2= host+"/api/user/status"
+    referer = host+"/console/checkin"
+    origin = host
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
     payload={
         'token': 'glados.cloud'
@@ -48,13 +56,16 @@ if __name__ == '__main__':
                 email = state.json()['data']['email']
                 points = checkin.json()['list'][0]['balance'].split(".")[0]
                 print(email+'----结果--'+msg+'----剩余('+time+')天'+'----点数('+points+')')  # 日志输出
-                sendContent += msg+'--剩余('+time+')天'+'--点数('+points+')--'+email+'\n'
+                stmp._send_to_mp(email[:email.find("@")]+'-'+msg+'-('+time+')天'+'-('+points+')point')
+                sendContent += msg+'--剩余('+time+')天'+'--点数('+points+')--'+email+'\n' # pushplus推送内容
         else:
-            requests.get('http://www.pushplus.plus/send?token=' + sckey + '&content='+email+'cookie已失效')
-            print('cookie已失效')  # 日志输出
-            break
+            failcontent += '第'+(i+1)+'个cookie已失效'+'\n' # pushplus推送内容
+            print(f"第{i+1}个cookie已失效")  # 日志输出
+            stmp._send_to_mp_failed(f"第{i+1}个cookie已失效")
+            continue
      #--------------------------------------------------------------------------------------------------------#   
     if sckey != "":
-         requests.get('http://www.pushplus.plus/send?token=' + sckey + '&title='+email+'签到成功'+'&content='+sendContent)
-
-
+        if sendContent != '':
+            requests.get('http://www.pushplus.plus/send?token=' + sckey + '&title=签到成功'+'&content='+sendContent)
+        elif failcontent != '':
+            requests.get('http://www.pushplus.plus/send?token=' + sckey + '&content=' + failcontent)

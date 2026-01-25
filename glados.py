@@ -55,8 +55,11 @@ if __name__ == '__main__':
                 time=str(time)
                 email = state.json()['data']['email']
                 points = checkin.json()['list'][0]['balance'].split(".")[0]
+                points_last = checkin.json()['list'][1]['balance'].split(".")[0]
                 print(email+'----结果--'+msg+'----剩余('+time+')天'+'----点数('+points+')')  # 日志输出
-                stmp._send_to_mp(email[:email.find("@")]+'-'+msg+'-('+time+')天'+'-('+points+')point')
+                # 点数变更时正好多于100/200才发送通知
+                if (int(points) >= 100 and int(points_last)<100) or (int(points) >= 200 and int(points_last)<200):
+                    stmp._send_to_mp(email[:email.find("@")]+'-'+msg+'-('+time+')天'+'-('+points+')point')
                 sendContent += msg+'--剩余('+time+')天'+'--点数('+points+')--'+email+'\n' # pushplus推送内容
         else:
             failcontent += '第'+(i+1)+'个cookie已失效'+'\n' # pushplus推送内容

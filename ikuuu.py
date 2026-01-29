@@ -5,18 +5,18 @@ from sendtomp import Send_to_MP
 # github workflows
 # -------------------------------------------------------------------------------------------
 def login_and_get_cookie(email,pwd):
-    login_url = "https://ikuuu.de/auth/login"
+    login_url = "https://ikuuu.nl/auth/login"
     headers = {
         "accept":"application/json, text/javascript, */*;",
         "content-type":"application/x-www-form-urlencoded; charset=UTF-8",
         "cookie":"lang=zh-cn",
-        "origin":"https://ikuuu.de",
+        "origin":"https://ikuuu.nl",
         "priority":"u=1, i",
-        "referer":"https://ikuuu.de/auth/login",
+        "referer":"https://ikuuu.nl/auth/login",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     }
     data = {
-        "host":"ikuuu.de",
+        "host":"ikuuu.nl",
         "email": email,
         "passwd": pwd,
         "code":""
@@ -61,10 +61,10 @@ if __name__ == '__main__':
     if cookie == "":
         print('未获取到COOKIE')
         exit(0)
-    url= "https://ikuuu.de/user/checkin"
-    url2= "https://ikuuu.de/user"
-    referer = 'https://ikuuu.de/user'
-    origin = "https://ikuuu.de"
+    url= "https://ikuuu.nl/user/checkin"
+    url2= "https://ikuuu.nl/user"
+    referer = 'https://ikuuu.nl/user'
+    origin = "https://ikuuu.nl"
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
     checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'text/html; charset=UTF-8','priority':'u=1, i'})

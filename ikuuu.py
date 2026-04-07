@@ -19,7 +19,13 @@ def login_and_get_cookie(email,pwd):
         "host":"ikuuu.nl",
         "email": email,
         "passwd": pwd,
-        "code":""
+        "code":"",
+        "captcha_result[lot_number]":"",
+        "captcha_result[captcha_output]":"",
+        "captcha_result[pass_token]":"",
+        "captcha_result[gen_time]":"",
+        "remember_me":"on",
+        "pageLoadedAt":""
     }
 
     try:
@@ -73,7 +79,7 @@ if __name__ == '__main__':
         n = 'success'
     else:
         print("cookie失效")
-        cookie_tm = login_and_get_cookie(email,pwd)
+        cookie_tm = login_and_get_cookie(email,pwd) # 获取新cookie
         if cookie_tm != None:
             cookies = cookie_tm.items()
             cookie = 'lang=zh-cn;'

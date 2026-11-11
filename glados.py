@@ -48,7 +48,12 @@ if __name__ == '__main__':
             i=i+1
             state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
     #--------------------------------------------------------------------------------------------------------#  
-            time = state.json()['data']['leftDays']
+            state_j = state.json()
+            data = state_j.get("data") if isinstance(state_j, dict) else {}
+            time = data.get("leftDays")
+            if time is None:
+                print(f"第{i}个签到失败，state:{state_j}")
+                continue
             if isinstance(time,str):
                 time = time.split('.')[0]
             else:

@@ -3,6 +3,23 @@ from sendtomp import Send_to_MP
 # -------------------------------------------------------------------------------------------
 # github workflows
 # -------------------------------------------------------------------------------------------
+
+def deep_get(obj, path, default=None):
+    """按路径安全取值，如 deep_get(data, "list.0.balance", "0")"""
+    cur = obj
+    for key in path.split("."):
+        if isinstance(cur, list):
+            if not key.isdigit() or int(key) >= len(cur):
+                return default
+            cur = cur[int(key)]
+        elif isinstance(cur, dict):
+            if key not in cur:
+                return default
+            cur = cur[key]
+        else:
+            return default
+    return cur
+
 if __name__ == '__main__':
 # pushplus秘钥 申请地址 http://www.pushplus.plus/
     sckey = os.environ.get("PUSHPLUS_TOKEN", "")
@@ -34,8 +51,9 @@ if __name__ == '__main__':
         cookie=cookies[i]
     # for cookie in cookies:
         checkin = requests.post(url,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent,'content-type':'application/json;charset=UTF-8'},data=json.dumps(payload))
+        checkin_j = checkin.json()
         if 'message' in checkin.text:
-            msg = checkin.json()['message']
+            msg = checkin_j.get("message")
             # 判断域名是否过期
             if msg.find("please checkin via") != -1:
                 host=msg[msg.find("https"):]
@@ -45,12 +63,15 @@ if __name__ == '__main__':
                 origin=host
                 payload['token']=host[8:]
                 continue
-            i=i+1
+            elif msg.find("Cloudflare verification failed.") != -1:
+                i = i + 1
+                print(f"第{i}个签到失败，msg:Cloudflare verification failed. Nothing was recorded — please retry.")
+                continue
+            i = i + 1
             state =  requests.get(url2,headers={'cookie': cookie ,'referer': referer,'origin':origin,'user-agent':useragent})
     #--------------------------------------------------------------------------------------------------------#  
             state_j = state.json()
-            data = state_j.get("data") if isinstance(state_j, dict) else {}
-            time = data.get("leftDays")
+            time = deep_get(state_j,"data.leftDays")
             if time is None:
                 print(f"第{i}个签到失败，state:{state_j}")
                 continue
@@ -58,9 +79,9 @@ if __name__ == '__main__':
                 time = time.split('.')[0]
             else:
                 time=str(time)
-                email = state.json()['data']['email']
-                points = checkin.json()['list'][0]['balance'].split(".")[0]
-                points_last = checkin.json()['list'][1]['balance'].split(".")[0]
+                email = state_j.get("email")
+                points = str(deep_get(checkin_j,"list.0.balance")).split(".")[0]
+                points_last = str(deep_get(checkin_j,"list.1.balance")).split(".")[0]
                 print(email+'----结果--'+msg+'----剩余('+time+')天'+'----点数('+points+')')  # 日志输出
                 # 点数变更时正好多于100/200才发送通知
                 if (int(points) >= 100 and int(points_last)<100) or (int(points) >= 200 and int(points_last)<200):
@@ -70,6 +91,7 @@ if __name__ == '__main__':
             failcontent += '第'+(i+1)+'个cookie已失效'+'\n' # pushplus推送内容
             print(f"第{i+1}个cookie已失效")  # 日志输出
             stmp._send_to_mp_failed(f"第{i+1}个cookie已失效")
+            i = i+1
             continue
      #--------------------------------------------------------------------------------------------------------#   
     if sckey != "":

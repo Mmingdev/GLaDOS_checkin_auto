@@ -82,7 +82,7 @@ if __name__ == '__main__':
                 email = state_j.get("email")
                 points = str(deep_get(checkin_j,"list.0.balance")).split(".")[0]
                 points_last = str(deep_get(checkin_j,"list.1.balance")).split(".")[0]
-                print(email+'----结果--'+msg+'----剩余('+time+')天'+'----点数('+points+')')  # 日志输出
+                print(f"{email}----结果--{msg}----剩余({time})天----点数({points})")  # 日志输出
                 # 点数变更时正好多于100/200才发送通知
                 if (int(points) >= 100 and int(points_last)<100) or (int(points) >= 200 and int(points_last)<200):
                     stmp._send_to_mp(email[:email.find("@")]+'-'+msg+'-('+time+')天'+'-('+points+')point')
